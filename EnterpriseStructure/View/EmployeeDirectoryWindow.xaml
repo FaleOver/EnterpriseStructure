@@ -1,0 +1,80 @@
+﻿<Window x:Class="Presentation.EmployeeDirectoryWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Presentation"
+        mc:Ignorable="d"
+        Title="Справочник сотрудников" Height="450" Width="600"
+        MinHeight="450" MinWidth="600"
+        WindowStartupLocation="CenterOwner">
+    <DockPanel Margin="16">
+        <UniformGrid DockPanel.Dock="Top" 
+                     Columns="3" 
+                     Margin="0,0,0,8">
+            <HeaderedContentControl Header="Фамилия:" 
+                                    Margin="0,0,8,8">
+                <TextBox Text="{Binding SearchLastName, UpdateSourceTrigger=PropertyChanged}"/>
+            </HeaderedContentControl>
+            
+            <HeaderedContentControl Header="Имя:" 
+                                    Margin="0,0,8,0">
+                <TextBox Text="{Binding SearchFirstName, UpdateSourceTrigger=PropertyChanged}"/>
+            </HeaderedContentControl>
+            
+            <HeaderedContentControl Header="Отчество:">
+                <TextBox Text="{Binding SearchMiddleName, UpdateSourceTrigger=PropertyChanged}"/>
+            </HeaderedContentControl>
+        </UniformGrid>
+        
+        <StackPanel DockPanel.Dock="Bottom" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Right" 
+                    Margin="0,8,0,0">
+            <Button Content="Выбрать"
+                    Command="{Binding SelectCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                    Visibility="{Binding IsAssignVisible, Converter={StaticResource BoolToVisibility}}"
+                    Margin="0,0,8,0" 
+                    Padding="8,4"/>
+            
+            <Button Content="Добавить" 
+                    Command="{Binding AddCommand}"
+                    Margin="0,0,8,0" 
+                    Padding="8,4"/>
+            
+            <Button Content="Редактировать" 
+                    Command="{Binding EditCommand}"
+                    Margin="0,0,8,0" 
+                    Padding="8,4"/>
+            
+            <Button Content="Удалить" 
+                    Command="{Binding DeleteCommand}"
+                    Margin="0,0,8,0" 
+                    Padding="8,4"/>
+
+            <Button Content="Отмена" 
+                    Command="{Binding CancelCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                    Padding="8,4"/>
+        </StackPanel>
+
+        <DataGrid ItemsSource="{Binding Employees}"
+                  SelectedItem="{Binding SelectedEmployee}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  SelectionMode="Single">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Фамилия"
+                                    Binding="{Binding LastName}" 
+                                    Width="*"/>
+                <DataGridTextColumn Header="Имя"
+                                    Binding="{Binding FirstName}" 
+                                    Width="*"/>
+                <DataGridTextColumn Header="Отчество"
+                                    Binding="{Binding MiddleName}" 
+                                    Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+</Window>

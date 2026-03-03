@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Business/Business.csproj" Id="a34f2c59-8224-4da8-8463-e91fa9becd71" />
+  <Project Path="Common/Common.csproj" Id="04a6cda5-8c37-4723-8d7b-6959581e7e44" />
+  <Project Path="DataAccess/DataAccess.csproj" Id="81b0875d-dc53-4aa6-b15e-0d8cd82208f9" />
+  <Project Path="EnterpriseStructure/Presentation.csproj" />
+</Solution>

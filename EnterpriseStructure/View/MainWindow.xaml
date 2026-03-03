@@ -1,0 +1,122 @@
+﻿<Window x:Class="EnterpriseStructure.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EnterpriseStructure"
+        mc:Ignorable="d"
+        Title="Структура предприятия" Height="450" Width="800"
+        MinHeight="350" MinWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <Menu >
+            <MenuItem Header="Добавить" 
+                      Command="{Binding AddNodeCommand}"/>
+            <MenuItem Header="Переименовать" 
+                      Command="{Binding RenameCommand}"/>
+            <MenuItem Header="Удалить" 
+                      Command="{Binding DeleteCommand}"/>
+            <MenuItem Header="Открыть справочник" 
+                      Command="{Binding OpenEmplDirectoryCommand}"/>
+        </Menu>
+        
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <TreeView ItemsSource="{Binding Nodes}" 
+                      SelectedItemChanged="TreeView_SelectedItemChanged">
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="TreeViewItem">
+                        <Setter Property="IsExpanded" 
+                                Value="True"/>
+                        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
+                    </Style>
+                </TreeView.ItemContainerStyle>
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                        <TextBlock Text="{Binding Name}"/>
+                    </HierarchicalDataTemplate>
+                </TreeView.ItemTemplate>
+            </TreeView>
+
+            <GroupBox Grid.Column="1" 
+                      Header="Сотрудник на позиции"
+                      Visibility="{Binding IsPositionSelected, Converter={StaticResource BoolToVisibility}}">
+                <StackPanel Margin="8">
+                    <StackPanel Visibility="{Binding HasAssignedEmployee, Converter={StaticResource BoolToVisibility}}">
+                        <HeaderedContentControl Header="Фамилия:"
+                                                Margin="0,8,8,8">
+                            <Border BorderBrush="Gray" 
+                                    BorderThickness="1" 
+                                    Padding="2">
+                                <TextBlock Text="{Binding DisplayLastName}"/>
+                            </Border>
+                        </HeaderedContentControl>
+                        
+                        <HeaderedContentControl Grid.Row="1" 
+                                                Header="Имя:" 
+                                                Margin="0,0,8,8">
+                            <Border BorderBrush="Gray" 
+                                    BorderThickness="1" 
+                                    Padding="2">
+                                <TextBlock Text="{Binding DisplayFirstName}"/>
+                            </Border>
+                        </HeaderedContentControl>
+                        
+                        <HeaderedContentControl Grid.Row="2" 
+                                                Header="Отчество:" 
+                                                Margin="0,0,8,8">
+                            <Border BorderBrush="Gray" 
+                                    BorderThickness="1" 
+                                    Padding="2">
+                                <TextBlock Text="{Binding DisplayMiddleName}"/>
+                            </Border>
+                        </HeaderedContentControl>
+                        
+                        <HeaderedContentControl Grid.Row="3" 
+                                                Header="Дата принятия:" 
+                                                Margin="0,0,8,8">
+                            <DatePicker SelectedDate="{Binding HireDate, Mode=TwoWay}" />
+                        </HeaderedContentControl>
+                    </StackPanel>
+
+                    <TextBlock Text="Сотрудник не назначен"
+                               Visibility="{Binding HasNoAssignedEmployee,
+                                            Converter={StaticResource BoolToVisibility}}"/>
+                    
+                    <StackPanel Orientation="Horizontal" 
+                                Margin="0,8,0,0">
+                        <Button Content="Сохранить" 
+                                Command="{Binding HireEmployeeCommand}" 
+                                Margin="0,0,4,0" 
+                                Padding="8,4"
+                                 Visibility="{Binding HasPendingAssignment, Converter={StaticResource BoolToVisibility}}"/>
+                        
+                        <Button Content="Отменить" 
+                                Command="{Binding CancelSelectCommand}" 
+                                Margin="0,0,4,0" 
+                                Padding="8,4"
+                                 Visibility="{Binding HasPendingAssignment, Converter={StaticResource BoolToVisibility}}"/>
+                        
+                        <Button Content="Снять с должности" 
+                                Command="{Binding DismissEmployeeCommand}" 
+                                Margin="0,0,4,0" 
+                                Padding="8,4"
+                                Visibility="{Binding HasEmployee, Converter={StaticResource BoolToVisibility}}"/>
+                        
+                        <Button Content="Выбрать" 
+                                Command="{Binding SelectEmployeeCommand}" 
+                                Padding="8,4"/>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+        </Grid>
+    </Grid>
+</Window>
