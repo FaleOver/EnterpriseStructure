@@ -1,7 +1,6 @@
 ﻿using Common.DTOs;
 using Common.Enums;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Presentation.Abstract;
 using System.Collections.ObjectModel;
 
 namespace Presentation.ViewModel

@@ -1,6 +1,8 @@
 ﻿using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
+using System.IO;
 
 namespace Presentation
 {
@@ -10,9 +12,15 @@ namespace Presentation
         {
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
 
-            optionsBuilder.UseSqlServer(
-                "Server=(localdb)\\mssqllocaldb;Database=MyWpfAppDb;Trusted_Connection=True;MultipleActiveResultSets=true",
-                b => b.MigrationsAssembly("Presentation"));
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
+            IConfiguration configuration = builder.Build();
+
+            var connectionString = configuration.GetConnectionString("defaultConnection");
+
+            optionsBuilder.UseSqlServer(connectionString, b => b.MigrationsAssembly("Presentation"));
 
             return new AppDbContext(optionsBuilder.Options);
         }

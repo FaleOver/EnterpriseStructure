@@ -4,7 +4,6 @@ using Common.Enums;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Presentation.Abstract;
-using System.ComponentModel.DataAnnotations;
 using System.Windows;
 
 namespace Presentation.ViewModel

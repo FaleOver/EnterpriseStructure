@@ -1,10 +1,8 @@
 ﻿using Business.Abstract;
-using Common;
 using Common.DTOs;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Presentation.Abstract;
-using System.ComponentModel.DataAnnotations;
 using System.Windows;
 
 namespace Presentation.ViewModel

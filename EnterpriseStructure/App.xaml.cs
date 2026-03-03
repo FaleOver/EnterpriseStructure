@@ -49,7 +49,7 @@ namespace EnterpriseStructure
             services.AddTransient<IEmployeeService, EmployeeService>();
             services.AddTransient<IHRService, HRService>();
 
-            services.AddTransient<IDialogService, DialogService>();
+            services.AddTransient<IDialogService, WpfDialogService>();
             services.AddTransient<IConfirmationMediator, WpfConfirmationMediator>();
             services.AddTransient<IErrorMediator, WpfErrorMediator>();
 

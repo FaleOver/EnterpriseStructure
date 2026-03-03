@@ -5,7 +5,7 @@ using System.Windows;
 
 namespace Presentation.DialogService
 {
-    public class DialogService : IDialogService
+    public class WpfDialogService : IDialogService
     {
         public bool ShowDialog(object viewModel)
         {

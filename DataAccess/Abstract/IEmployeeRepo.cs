@@ -4,7 +4,7 @@ namespace DataAccess.Abstract
 {
     public interface IEmployeeRepo
     {
-        void Add(Employee entity);
+        Task AddAsync(Employee entity);
         Task<IReadOnlyList<Employee>> GetAllAsync();
         Task<Employee?> GetByIdAsync(int id);
         void Update(Employee entity);

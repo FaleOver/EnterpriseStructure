@@ -26,7 +26,7 @@ namespace Business.Services
             position.EmployeeId = employeeId;
             position.HireDate = hireDate;
 
-            await _unitOfWork.StructureNodes.Update(position);
+            _unitOfWork.StructureNodes.Update(position);
             await _unitOfWork.SaveChangesAsync();
         }
 
@@ -40,7 +40,7 @@ namespace Business.Services
             position.EmployeeId = null;
             position.HireDate = null;
 
-            await _unitOfWork.StructureNodes.Update(position);
+            _unitOfWork.StructureNodes.Update(position);
             await _unitOfWork.SaveChangesAsync();
         }
 
@@ -55,7 +55,7 @@ namespace Business.Services
             {
                 node.EmployeeId = null;
                 node.HireDate = null;
-                await _unitOfWork.StructureNodes.Update(node);
+                _unitOfWork.StructureNodes.Update(node);
             }
 
             _unitOfWork.Employees.Delete(employee);

@@ -4,7 +4,6 @@ using Common.DTOs;
 using Common.Enums;
 using DataAccess.Abstract;
 using DataAccess.Entities;
-using System.Xml.Linq;
 
 namespace Business.Services
 {
@@ -29,7 +28,7 @@ namespace Business.Services
                 NodeType = nodeType,
                 ParentId = parentId,
             };
-            await _unitOfWork.StructureNodes.Add(structureNode);
+            await _unitOfWork.StructureNodes.AddAsync(structureNode);
             await _unitOfWork.SaveChangesAsync();
 
             return new StructureNodeDto
@@ -96,7 +95,7 @@ namespace Business.Services
                 throw new BusinessValidationException("Ветка не найдена");
 
             structureNode.Name = newName;
-            await _unitOfWork.StructureNodes.Update(structureNode);
+            _unitOfWork.StructureNodes.Update(structureNode);
             await _unitOfWork.SaveChangesAsync();
         }
 

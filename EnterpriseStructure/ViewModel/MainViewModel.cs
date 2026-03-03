@@ -3,10 +3,8 @@ using Common.DTOs;
 using Common.Enums;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DataAccess.Entities;
 using Presentation.Abstract;
 using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
 
 namespace Presentation.ViewModel
 {
@@ -113,7 +111,7 @@ namespace Presentation.ViewModel
             }
         }
 
-        private void RefreshNodeDependentProperties()
+        private void RefreshDependentProperties()
         {
             OnPropertyChanged(nameof(DisplayLastName));
             OnPropertyChanged(nameof(DisplayFirstName));
@@ -217,7 +215,7 @@ namespace Presentation.ViewModel
                 SelectedNode.HireDate = DateOnly.FromDateTime(HireDate);
 
                 ClearPending();
-                RefreshNodeDependentProperties();
+                RefreshDependentProperties();
             });
         }
 
@@ -232,7 +230,7 @@ namespace Presentation.ViewModel
                 SelectedNode.HireDate = null;
                 HireDate = DateTime.Today;
 
-                RefreshNodeDependentProperties();
+                RefreshDependentProperties();
             });
         }
 

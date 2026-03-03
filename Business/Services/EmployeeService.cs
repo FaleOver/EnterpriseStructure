@@ -3,8 +3,6 @@ using Common;
 using Common.DTOs;
 using DataAccess.Abstract;
 using DataAccess.Entities;
-using DataAccess.Repositories;
-using System.Printing;
 
 namespace Business.Services
 {
@@ -27,7 +25,7 @@ namespace Business.Services
                 MiddleName = middleName,
                 LastName = lastName,
             };
-            _unitOfWork.Employees.Add(employee);
+            await _unitOfWork.Employees.AddAsync(employee);
             await _unitOfWork.SaveChangesAsync();
 
             return new EmployeeDto

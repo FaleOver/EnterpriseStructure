@@ -1,10 +1,7 @@
 ﻿using Business.Abstract;
-using Common;
 using Common.DTOs;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.SqlServer.Server;
 using Presentation.Abstract;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -58,31 +55,24 @@ namespace Presentation.ViewModel
             _ = LoadEmployeesAsync();
         }
 
-        partial void OnSearchLastNameChanged(string? value) => ScheduleSearch();
+        partial void OnSearchLastNameChanged(string? value) => _ = ScheduleSearch();
 
-        partial void OnSearchFirstNameChanged(string? value) => ScheduleSearch();
+        partial void OnSearchFirstNameChanged(string? value) => _ = ScheduleSearch();
 
-        partial void OnSearchMiddleNameChanged(string? value) => ScheduleSearch();
+        partial void OnSearchMiddleNameChanged(string? value) => _ = ScheduleSearch();
 
-        private void ScheduleSearch()
+        private async Task ScheduleSearch()
         {
             _searchCts?.Cancel();
             _searchCts = new CancellationTokenSource();
             var token = _searchCts.Token;
 
-            Task.Run(async () =>
+            try
             {
-                try
-                {
-                    await Task.Delay(400, token);
-                    if (!token.IsCancellationRequested)
-                    {
-                        _ = Application.Current.Dispatcher.Invoke(() =>
-                            _ = LoadEmployeesAsync());
-                    }
-                }
-                catch (TaskCanceledException) { }
-            }, token);
+                await Task.Delay(400, token);
+                await LoadEmployeesAsync();
+            }
+            catch (TaskCanceledException) { }
         }
 
         private async Task LoadEmployeesAsync()

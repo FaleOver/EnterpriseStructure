@@ -1,7 +1,6 @@
 ﻿using DataAccess.Abstract;
 using DataAccess.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Xml.Linq;
 
 namespace DataAccess.Repositories
 {
@@ -14,7 +13,7 @@ namespace DataAccess.Repositories
             _context = context;
         }
 
-        public async Task Add(StructureNode node)
+        public async Task AddAsync(StructureNode node)
         {
             await _context.StructureNodes.AddAsync(node);
         }
@@ -34,7 +33,7 @@ namespace DataAccess.Repositories
             return await _context.StructureNodes.Where(n => n.EmployeeId == id).ToListAsync();
         }
 
-        public async Task Update(StructureNode node)
+        public void Update(StructureNode node)
         {
             _context.StructureNodes.Update(node);
         }

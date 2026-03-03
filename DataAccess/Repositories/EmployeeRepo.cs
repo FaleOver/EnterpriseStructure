@@ -13,8 +13,8 @@ namespace DataAccess.Repositories
             _employees = context.Employees;
         }
 
-        public void Add(Employee employee) =>
-            _employees.Add(employee);
+        public async Task AddAsync(Employee employee) =>
+            await _employees.AddAsync(employee);
 
         public async Task<IReadOnlyList<Employee>> GetAllAsync() => 
              await _employees.ToListAsync();
