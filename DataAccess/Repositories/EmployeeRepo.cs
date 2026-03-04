@@ -13,20 +13,30 @@ namespace DataAccess.Repositories
             _employees = context.Employees;
         }
 
-        public async Task AddAsync(Employee employee) =>
+        public async Task AddAsync(Employee employee)
+        {
             await _employees.AddAsync(employee);
+        }
 
-        public async Task<IReadOnlyList<Employee>> GetAllAsync() => 
-             await _employees.ToListAsync();
+        public async Task<IReadOnlyList<Employee>> GetAllAsync()
+        {
+            return await _employees.ToListAsync();
+        }
 
-        public async Task<Employee?> GetByIdAsync(int id) =>
-             await _employees.FirstOrDefaultAsync(e => e.Id == id);
+        public async Task<Employee?> GetByIdAsync(int id)
+        {
+            return await _employees.FirstOrDefaultAsync(e => e.Id == id);
+        }
 
-        public void Update(Employee employee) =>
+        public void Update(Employee employee)
+        {
             _employees.Update(employee);
+        }
 
-        public void Delete(Employee employee) =>
+        public void Delete(Employee employee)
+        {
             _employees.Remove(employee);
+        }
 
         public async Task<IReadOnlyList<Employee>> SearchAsync(string? firstName, 
             string? middleName, string? lastName)

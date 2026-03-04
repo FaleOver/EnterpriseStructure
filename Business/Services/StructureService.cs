@@ -2,25 +2,31 @@
 using Common;
 using Common.DTOs;
 using Common.Enums;
+using DataAccess;
 using DataAccess.Abstract;
 using DataAccess.Entities;
+using DataAccess.Repositories;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Business.Services
 {
     public class StructureService : IStructureService
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IDbContextFactory<AppDbContext> _contextFactory;
 
-        public StructureService(IUnitOfWork unitOfWork)
+        public StructureService(IDbContextFactory<AppDbContext> contextFactory)
         {
-            _unitOfWork = unitOfWork;
+            _contextFactory = contextFactory;
         }
 
         public async Task<StructureNodeDto> CreateAsync(string name, NodeType nodeType, int parentId)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new BusinessValidationException("Отсутствует название");
-            await ValidateParent(parentId);
+            
+            await using var unitOfWork = new UnitOfWork(_contextFactory);
+            await ValidateParent(parentId, unitOfWork);
 
             var structureNode = new StructureNode
             {
@@ -28,8 +34,9 @@ namespace Business.Services
                 NodeType = nodeType,
                 ParentId = parentId,
             };
-            await _unitOfWork.StructureNodes.AddAsync(structureNode);
-            await _unitOfWork.SaveChangesAsync();
+
+            await unitOfWork.StructureNodes.AddAsync(structureNode);
+            await unitOfWork.SaveChangesAsync();
 
             return new StructureNodeDto
             {
@@ -44,7 +51,9 @@ namespace Business.Services
 
         public async Task<IReadOnlyList<StructureNodeDto>> GetAllAsync()
         {
-            var nodes = await _unitOfWork.StructureNodes.GetAllAsync();
+            IReadOnlyList<StructureNode> nodes;
+            await using var unitOfWork = new UnitOfWork(_contextFactory);
+            nodes = await unitOfWork.StructureNodes.GetAllAsync();
 
             if (nodes.Count == 0)
                 throw new BusinessValidationException("Ветки не найдены");
@@ -72,7 +81,9 @@ namespace Business.Services
 
         public async Task<StructureNodeDto?> GetByIdAsync(int id)
         {
-            var node = await _unitOfWork.StructureNodes.GetByIdAsync(id) ??
+            StructureNode node;
+            await using var unitOfWork = new UnitOfWork(_contextFactory);
+            node = await unitOfWork.StructureNodes.GetByIdAsync(id) ??
                 throw new BusinessValidationException("Ветка не найдена");
 
             return new StructureNodeDto
@@ -91,30 +102,33 @@ namespace Business.Services
             if (string.IsNullOrWhiteSpace(newName))
                 throw new BusinessValidationException("Имя не может быть пустым");
 
-            var structureNode = await _unitOfWork.StructureNodes.GetByIdAsync(structureNodeId) ??
-                throw new BusinessValidationException("Ветка не найдена");
+            StructureNode structureNode;
+            await using var unitOfWork = new UnitOfWork(_contextFactory);
+            structureNode = await unitOfWork.StructureNodes.GetByIdAsync(structureNodeId) ??
+            throw new BusinessValidationException("Ветка не найдена");
 
             structureNode.Name = newName;
-            _unitOfWork.StructureNodes.Update(structureNode);
-            await _unitOfWork.SaveChangesAsync();
+            unitOfWork.StructureNodes.Update(structureNode);
+            await unitOfWork.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(int id)
         {
-            var structureNode = await _unitOfWork.StructureNodes.GetByIdAsync(id) ??
-                throw new BusinessValidationException("Сотрудник не найден");
+            await using var unitOfWork = new UnitOfWork(_contextFactory);
+            var structureNode = await unitOfWork.StructureNodes.GetByIdAsync(id) ??
+                throw new BusinessValidationException("Ветка не найдена");
 
             if (structureNode.ParentId != null)
-            {
-                await _unitOfWork.StructureNodes.DeleteAsync(structureNode);
-            }
+                await unitOfWork.StructureNodes.DeleteAsync(structureNode);
+            else
+                throw new BusinessValidationException("Корневой узей нельзя удалить");
         }
 
-        private async Task ValidateParent(int? parentId)
+        private async Task ValidateParent(int? parentId, IUnitOfWork unitOfWork)
         {
             if (parentId == null)
                 throw new BusinessValidationException("Родительский элемент обязателен");
-            var parent = await _unitOfWork.StructureNodes.GetByIdAsync(parentId.Value) ?? 
+            var parent = await unitOfWork.StructureNodes.GetByIdAsync(parentId.Value) ?? 
                 throw new BusinessValidationException("Родитель не найден");
             if (parent.NodeType == NodeType.Position)
                 throw new BusinessValidationException("Должность - конечная ветка");

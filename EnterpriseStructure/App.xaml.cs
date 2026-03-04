@@ -43,8 +43,6 @@ namespace EnterpriseStructure
                 options.UseSqlServer(GetConnectionString(), 
                     b => b.MigrationsAssembly("Presentation")));
 
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
-
             services.AddTransient<IStructureService, StructureService>();
             services.AddTransient<IEmployeeService, EmployeeService>();
             services.AddTransient<IHRService, HRService>();
@@ -76,7 +74,7 @@ namespace EnterpriseStructure
 
         //private void DataBaseCreation()
         //{
-        //    var scope = ServiceProvider.CreateScope();
+        //    using var scope = ServiceProvider.CreateScope();
         //    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         //    dbContext.Database.EnsureCreated();
         //}

@@ -10,6 +10,6 @@ namespace DataAccess.Abstract
         void Update(Employee entity);
         void Delete(Employee entity);
         Task<IReadOnlyList<Employee>> SearchAsync(string? firstName, 
-            string? middleName, string? lsatName);
+            string? middleName, string? lastName);
     }
 }

@@ -27,10 +27,9 @@ namespace Presentation.Abstract
         }
 
         [RelayCommand]
-        private void Cancel(Window window)
+        private void Cancel(ICloseable window)
         {
-            if (window != null)
-                window.DialogResult = false;
+            window?.CloseWithResult(false);
         }
     }
 }

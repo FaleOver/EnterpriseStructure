@@ -1,18 +1,22 @@
 ﻿using Business.Abstract;
 using Common;
 using Common.DTOs;
+using DataAccess;
 using DataAccess.Abstract;
 using DataAccess.Entities;
+using DataAccess.Repositories;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Business.Services
 {
     public class EmployeeService : IEmployeeService
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IDbContextFactory<AppDbContext> _contextFactory;
 
-        public EmployeeService(IUnitOfWork unitOfWork)
+        public EmployeeService(IDbContextFactory<AppDbContext> contextFactory)
         {
-            _unitOfWork = unitOfWork;
+            _contextFactory = contextFactory;
         }
 
         public async Task<EmployeeDto> CreateAsync(string lastName, string firstName, string middleName)
@@ -25,8 +29,10 @@ namespace Business.Services
                 MiddleName = middleName,
                 LastName = lastName,
             };
-            await _unitOfWork.Employees.AddAsync(employee);
-            await _unitOfWork.SaveChangesAsync();
+
+            await using var unitOfWork = new UnitOfWork(_contextFactory);
+            await unitOfWork.Employees.AddAsync(employee);
+            await unitOfWork.SaveChangesAsync();
 
             return new EmployeeDto
             {
@@ -39,7 +45,8 @@ namespace Business.Services
 
         public async Task<IReadOnlyList<EmployeeDto>> GetAllAsync()
         {
-            var employees = await _unitOfWork.Employees.GetAllAsync();
+            await using var unitOfWork = new UnitOfWork(_contextFactory);
+            var employees = await unitOfWork.Employees.GetAllAsync();
 
             //if (employees.Count == 0)
             //    throw new BusinessValidationException("Сотрудники не найдены");
@@ -57,7 +64,8 @@ namespace Business.Services
 
         public async Task<EmployeeDto?> GetByIdAsync(int id)
         {
-            var employee = await _unitOfWork.Employees.GetByIdAsync(id) ??
+            await using var unitOfWork = new UnitOfWork(_contextFactory);
+            var employee = await unitOfWork.Employees.GetByIdAsync(id) ??
                 throw new BusinessValidationException("Ветка не найдена");
 
             return new EmployeeDto
@@ -74,13 +82,14 @@ namespace Business.Services
         {
             ValidateName(firstName, middleName, lastName);
 
-            var employee = await _unitOfWork.Employees.GetByIdAsync(employeeId) ??
+            await using var unitOfWork = new UnitOfWork(_contextFactory);
+            var employee = await unitOfWork.Employees.GetByIdAsync(employeeId) ??
                 throw new BusinessValidationException("Сотрудник не найден");
 
             employee.FirstName = firstName; employee.MiddleName = middleName;
             employee.LastName = lastName;
-            _unitOfWork.Employees.Update(employee);
-            await _unitOfWork.SaveChangesAsync();
+            unitOfWork.Employees.Update(employee);
+            await unitOfWork.SaveChangesAsync();
 
             return new EmployeeDto
             {
@@ -98,7 +107,8 @@ namespace Business.Services
                 && string.IsNullOrWhiteSpace(lastName))
                 return await GetAllAsync();
 
-            var employees = await _unitOfWork.Employees.SearchAsync(firstName, middleName, lastName);
+            await using var unitOfWork = new UnitOfWork(_contextFactory);
+            var employees = await unitOfWork.Employees.SearchAsync(firstName, middleName, lastName);
 
             var dtos = employees.Select(e => new EmployeeDto
             {
