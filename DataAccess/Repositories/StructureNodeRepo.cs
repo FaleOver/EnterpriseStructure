@@ -20,12 +20,16 @@ namespace DataAccess.Repositories
 
         public async Task<IReadOnlyList<StructureNode>> GetAllAsync()
         {
-            return await _context.StructureNodes.ToListAsync();
+            return await _context.StructureNodes
+                .Include(n => n.Employee)
+                .ToListAsync();
         }
 
         public async Task<StructureNode?> GetByIdAsync(int id)
         {
-            return await _context.StructureNodes.FirstOrDefaultAsync(n => n.Id == id);
+            return await _context.StructureNodes
+                .Include(n => n.Employee)
+                .FirstOrDefaultAsync(n => n.Id == id);
         }
 
         public async Task<IReadOnlyList<StructureNode>> GetByEmployeeIdAsync(int id)
